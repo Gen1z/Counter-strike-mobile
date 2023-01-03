@@ -1,0 +1,127 @@
+{
+  "project_info": {
+    "project_number": "84793832681",
+    "firebase_url": "https://world-chat-88551-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "world-chat-88551",
+    "storage_bucket": "world-chat-88551.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84793832681:android:7fa6a06d57fc12cdc1ec78",
+        "android_client_info": {
+          "package_name": "com.gamedavers.onlinestrike2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDigPFP9O6wN5SzS1ActOeSlPktXCq4z0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84793832681:android:b23d31d2645b5c85c1ec78",
+        "android_client_info": {
+          "package_name": "com.gamedavers.onlinestrike2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDigPFP9O6wN5SzS1ActOeSlPktXCq4z0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84793832681:android:a201a0e72ff6978ac1ec78",
+        "android_client_info": {
+          "package_name": "com.gamedavers.onlinestrike2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDigPFP9O6wN5SzS1ActOeSlPktXCq4z0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84793832681:android:daf31fd3cc5576acc1ec78",
+        "android_client_info": {
+          "package_name": "com.gamedavers.onlinestrike2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDigPFP9O6wN5SzS1ActOeSlPktXCq4z0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
