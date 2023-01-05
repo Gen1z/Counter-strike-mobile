@@ -4,13 +4,8 @@ import static java.lang.Math.cos;
 import static java.lang.Math.floor;
 import static java.lang.Math.sin;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.view.GestureDetectorCompat;
-
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,31 +18,22 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
-
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -64,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Game extends AppCompatActivity implements GestureDetector.OnGestureListener,GoogleApiClient.OnConnectionFailedListener {
 
+    private static final int RC_SIGN_IN = 2;
     private Bitmap texture;
     private Bitmap texture_src;
     private Bitmap dor_texture;
@@ -78,6 +65,7 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
     private static MediaPlayer mdShagi;
     public FileOutputStream fileLog;
     static boolean start = false;
+    static boolean loading = false;
     static int maxPlayers;
     static int healt = 100;
     static int fov;
@@ -98,10 +86,10 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
     static ArrayList<String> OppFire = new ArrayList<>();
     static ArrayList<Integer> OppHealths = new ArrayList<>();
     //
-    private GoogleSignInClient client;
+    GoogleSignInClient mGoogleSignInClient;
     static FirebaseDatabase database;
     static FirebaseAuth mAuth;
-    static FirebaseUser User;
+    static FirebaseUser mUser;
     static Bitmap preview_src;
     static Bitmap preview;
     static Bitmap button;
@@ -109,15 +97,11 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_preview);
         start = false;
-        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        client = GoogleSignIn.getClient(this,options);
         mAuth = FirebaseAuth.getInstance();
-        User = mAuth.getCurrentUser();
-        database = FirebaseDatabase.getInstance("https://online-strike-3-default-rtdb.europe-west1.firebasedatabase.app");
+        mUser = mAuth.getCurrentUser();
+        database = FirebaseDatabase.getInstance("https://online-strike-2-d5f7b-default-rtdb.europe-west1.firebasedatabase.app");
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
         height = display.getHeight();
@@ -213,7 +197,11 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
         codes.add(".");
         codes.add("-");
         mdShagi = MediaPlayer.create(this, R.raw.shagi);
-        setContentView(new PreviewRender(this));
+        if (mUser == null) {
+            signIn();
+        }
+        loading = true;
+        setContentView(new PreviewRender(Game.this));
     }
 
     @Override
@@ -223,38 +211,36 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
     }
 
     private void signIn() {
-        Intent i = client.getSignInIntent();
-        startActivityForResult(i,1234);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1234){
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-
-                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
-                FirebaseAuth.getInstance().signInWithCredential(credential)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
-
-                                }else {
-                                    Toast.makeText(Game.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-                        });
-
-            } catch (ApiException e) {
-                e.printStackTrace();
-            }
-
+            handleSignInResult(task);
         }
+    }
 
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+
+            // Signed in successfully, show authenticated UI.
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+        }
     }
 
     public boolean checkPlayerBook(int player) throws InterruptedException {
@@ -300,21 +286,10 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
 
     @Override
     public boolean onDown(@NonNull MotionEvent e) {
-        if(!start){
-            if(User==null){
-                if(e.getX()>50&&e.getX()<300){
-                    if(e.getY()>height-150&&e.getY()<height-25){
-                        signIn();
-                        try {
-                            startGame();
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-            }else{
-                if(e.getX()>50&&e.getX()<300){
-                    if(e.getY()>height-150&&e.getY()<height-25){
+        if(loading){
+            if(!start){
+                if (e.getX() > 50 && e.getX() < 300) {
+                    if (e.getY() > height - 150 && e.getY() < height - 25) {
                         try {
                             startGame();
                         } catch (InterruptedException ex) {
@@ -323,95 +298,94 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
                     }
                 }
             }
-
-        }
-        if(start){
-            if(e.getX() > width/4 && e.getX()<(width/4)+100) {
-                if (e.getY() > height / 4 && e.getY() < (height / 4) + 100) {
-                    mdShagi.start();
-                    walk = true;
-                    py += 1 * angleX;
-                    px += 1 * angleY;
-                } else {
-                    walk = false;
-                }
-            }
-            if(e.getX() > width/4 && e.getX()<(width/4)+100) {
-                if (e.getY() > (height / 4) + 120 && e.getY() < (height / 4) + 220) {
-                    mdShagi.start();
-                    walk = true;
-                    py -= 1 * angleX;
-                    px -= 1 * angleY;
-                } else {
-                    if(!walk){
+            if(start){
+                if(e.getX() > width/4 && e.getX()<(width/4)+100) {
+                    if (e.getY() > height / 4 && e.getY() < (height / 4) + 100) {
+                        mdShagi.start();
+                        walk = true;
+                        py += 1 * angleX;
+                        px += 1 * angleY;
+                    } else {
                         walk = false;
                     }
                 }
-            }
-            if(px<0)
-                px=0;
-            if(py<0)
-                py=0;
-            if(e.getX() > width/2+(width/4) && e.getX()<width/2+(width/4)+100){
-                if(e.getY()>height/2&&e.getY()<(height/2)+100){
-                    sp.play(FireSound,1,1,0,0,1);
-                    fire=true;
+                if(e.getX() > width/4 && e.getX()<(width/4)+100) {
+                    if (e.getY() > (height / 4) + 120 && e.getY() < (height / 4) + 220) {
+                        mdShagi.start();
+                        walk = true;
+                        py -= 1 * angleX;
+                        px -= 1 * angleY;
+                    } else {
+                        if(!walk){
+                            walk = false;
+                        }
+                    }
+                }
+                if(px<0)
+                    px=0;
+                if(py<0)
+                    py=0;
+                if(e.getX() > width/2+(width/4) && e.getX()<width/2+(width/4)+100){
+                    if(e.getY()>height/2&&e.getY()<(height/2)+100){
+                        sp.play(FireSound,1,1,0,0,1);
+                        fire=true;
+                    }else{
+                        fire=false;
+                    }
                 }else{
-                    fire=false;
+                    fire = false;
                 }
-            }else{
-                fire = false;
-            }
-            //
+                //
 
-            encode = "";
-            saveData(String.valueOf((int) px));
-            saveData(String.valueOf((int) py));
-            saveData(String.valueOf((int) angle));
-            saveData(String.valueOf(fire));
-            saveData(String.valueOf(walk));
-            saveData(String.valueOf(healt));
-            myAddress.setValue(encode);
-            if(fire){
-                try {
-                    TimeUnit.MILLISECONDS.sleep(30);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
                 encode = "";
                 saveData(String.valueOf((int) px));
                 saveData(String.valueOf((int) py));
                 saveData(String.valueOf((int) angle));
-                saveData(String.valueOf(false));
-                saveData(String.valueOf(false));
+                saveData(String.valueOf(fire));
+                saveData(String.valueOf(walk));
                 saveData(String.valueOf(healt));
                 myAddress.setValue(encode);
-            }
-            if(walk){
+                if(fire){
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(30);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                    encode = "";
+                    saveData(String.valueOf((int) px));
+                    saveData(String.valueOf((int) py));
+                    saveData(String.valueOf((int) angle));
+                    saveData(String.valueOf(false));
+                    saveData(String.valueOf(false));
+                    saveData(String.valueOf(healt));
+                    myAddress.setValue(encode);
+                }
+                if(walk){
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(30);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                    encode = "";
+                    saveData(String.valueOf((int) px));
+                    saveData(String.valueOf((int) py));
+                    saveData(String.valueOf((int) angle));
+                    saveData(String.valueOf(false));
+                    saveData(String.valueOf(false));
+                    saveData(String.valueOf(healt));
+                    myAddress.setValue(encode);
+                }
+                setContentView(new RaycastDraw(this));
+                // Текущее время
+                Date currentDate = new Date();
+                String log = "//" + currentDate + " | " + "touch on screen";
                 try {
-                    TimeUnit.MILLISECONDS.sleep(30);
-                } catch (InterruptedException ex) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        fileLog.write(log.getBytes(StandardCharsets.UTF_8));
+                    }
+                } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                encode = "";
-                saveData(String.valueOf((int) px));
-                saveData(String.valueOf((int) py));
-                saveData(String.valueOf((int) angle));
-                saveData(String.valueOf(false));
-                saveData(String.valueOf(false));
-                saveData(String.valueOf(healt));
-                myAddress.setValue(encode);
-            }
-            setContentView(new RaycastDraw(this));
-            // Текущее время
-            Date currentDate = new Date();
-            String log = "//" + currentDate + " | " + "touch on screen";
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    fileLog.write(log.getBytes(StandardCharsets.UTF_8));
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
             }
         }
         return false;
@@ -581,7 +555,7 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
             paint.setTextSize(35);
             paint.setColor(Color.WHITE);
             canvas.drawText("Connecting...",50,50,paint);
-            String a = String.valueOf(1);
+            String a = String.valueOf(mUser.getUid());
             String result = a.replaceAll("[^\\p{N}]+", "");
             myPlayer = Integer.parseInt(result);
             if(myPlayer==0){
@@ -615,7 +589,7 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
             }
             //
             myAddress = database.getReference("P"+String.valueOf(myPlayer));
-            start = true;
+
             int i = 0;
             OppAddress.clear();
             while(!(i>=maxPlayers)){
@@ -660,6 +634,7 @@ public class Game extends AppCompatActivity implements GestureDetector.OnGesture
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            start = true;
         }
     }
 

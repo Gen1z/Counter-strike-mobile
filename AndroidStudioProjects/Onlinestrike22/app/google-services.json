@@ -1,121 +1,34 @@
 {
   "project_info": {
-    "project_number": "84793832681",
-    "firebase_url": "https://world-chat-88551-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "world-chat-88551",
-    "storage_bucket": "world-chat-88551.appspot.com"
+    "project_number": "89621247197",
+    "firebase_url": "https://online-strike-2-d5f7b-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "online-strike-2-d5f7b",
+    "storage_bucket": "online-strike-2-d5f7b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:84793832681:android:7fa6a06d57fc12cdc1ec78",
+        "mobilesdk_app_id": "1:89621247197:android:8ac4a542605facce4b9734",
         "android_client_info": {
           "package_name": "com.gamedavers.onlinestrike2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+          "client_id": "89621247197-4oufajf0laj9tcm5dm20d6sficosl4tr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDigPFP9O6wN5SzS1ActOeSlPktXCq4z0M"
+          "current_key": "AIzaSyDjHI113SXFcSgT9VOIoNHz3437t_4rZIA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:84793832681:android:b23d31d2645b5c85c1ec78",
-        "android_client_info": {
-          "package_name": "com.gamedavers.onlinestrike2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDigPFP9O6wN5SzS1ActOeSlPktXCq4z0M"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:84793832681:android:a201a0e72ff6978ac1ec78",
-        "android_client_info": {
-          "package_name": "com.gamedavers.onlinestrike2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDigPFP9O6wN5SzS1ActOeSlPktXCq4z0M"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:84793832681:android:daf31fd3cc5576acc1ec78",
-        "android_client_info": {
-          "package_name": "com.gamedavers.onlinestrike2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDigPFP9O6wN5SzS1ActOeSlPktXCq4z0M"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "84793832681-murf9tga5pirfeqbat7l9jrvkf15bssf.apps.googleusercontent.com",
+              "client_id": "89621247197-4oufajf0laj9tcm5dm20d6sficosl4tr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
